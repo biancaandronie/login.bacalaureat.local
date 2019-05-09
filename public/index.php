@@ -51,7 +51,7 @@ function login($request,$response) {
         
         $db = null;
          if($userData){
-             return $response->withJson($userData,200);
+             return $response->withJson("{\"userData\": $userData}",200);
             } else {
               return $response->withJson('{"error":{"text":"Bad request wrong username and password"}}',401);
          }
