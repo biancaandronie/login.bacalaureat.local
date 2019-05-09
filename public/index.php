@@ -50,7 +50,9 @@ function login($request,$response) {
 
         $db = null;
         if ($userData) {
-            return $response->write('{"userData": ' . $userData . '}');
+            $userData = json_encode($userData);
+            echo '{"userData": ' .$userData . '}';
+            //return $response->write('{"userData": ' . $userData . '}');
         } else {
             return $response->withJson('{"error":{"text":"Bad request wrong username and password"}}', 401);
         }
