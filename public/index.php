@@ -31,32 +31,30 @@ require __DIR__ . '/../src/middleware.php';
 function login($request,$response) {
     $data = json_decode($request->getBody());
     try {
-        
+
         $db = getConnection();
-        $userData ='';
+        $userData = '';
         $sql = "SELECT user_id, name, email, username FROM users WHERE (username=:username or email=:username) and password=:password ";
         $stmt = $db->prepare($sql);
         $stmt->bindParam("username", $data->username, PDO::PARAM_STR);
-        $password=hash('sha256',$data->password);
+        $password = hash('sha256', $data->password);
         $stmt->bindParam("password", $password, PDO::PARAM_STR);
         $stmt->execute();
-        $mainCount=$stmt->rowCount();
+        $mainCount = $stmt->rowCount();
         $userData = $stmt->fetch(PDO::FETCH_OBJ);
-        
-        if(!empty($userData))
-        {
-            $user_id=$userData->user_id;
+
+        if (!empty($userData)) {
+            $user_id = $userData->user_id;
             $userData->token = apiToken($user_id);
         }
-        
-        $db = null;
-         if($userData){
-             return $response->withJson('{"userData": ' .$userData . '}',200);
-            } else {
-              return $response->withJson('{"error":{"text":"Bad request wrong username and password"}}',401);
-         }
 
-           
+        $db = null;
+        if ($userData) {
+            return $response->withJson('{"userData": ' . $userData . '}', 200);
+        } else {
+            return $response->withJson('{"error":{"text":"Bad request wrong username and password"}}', 401);
+        }
+
     }
     catch(PDOException $e) {
         echo '{"error":{"text":'. $e->getMessage() .'}}';
